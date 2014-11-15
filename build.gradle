@@ -1,0 +1,38 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile 'com.hazelcast:hazelcast-all:3.3.3'
+    compile 'com.facebook.presto:presto-spi:0.79'
+    compile 'com.facebook.presto:presto-main:0.79'
+    compile 'com.facebook.presto:presto-server:0.75'
+    compile 'redis.clients:collections:0.0.1-SNAPSHOT'
+
+    testCompile group: 'junit', name: 'junit', version: '3.8.1'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Presto-Redis', 'Implementation-Version': version
+    }
+}
+
+task runServer(dependsOn: 'classes', type: JavaExec) {
+	main = 'com.aahmedse.presto.redis.PrestoRedisServer'
+	classpath = sourceSets.main.runtimeClasspath
+	args '-ea'
+	workingDir 'src/main/resources'
+	systemProperty 'config', 'config.properties'
+	systemProperty 'log.levels-file', 'log.properties'
+}
+
